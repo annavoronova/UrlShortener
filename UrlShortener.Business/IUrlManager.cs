@@ -9,7 +9,8 @@ namespace UrlShortener.Business
 {
     public interface IUrlManager
     {
-        //Task<string> ShortenUrl(string longUrl);
+        Task<List<Entities.ShortUrl>> EnumUrls();
+        //IList<Entities.ShortUrl> EnumAllUrls();
         Task<ShortUrl> ShortenUrl(string longUrl, string ip, string segment = "");
         Task<Statistics> Click(string segment, string referer, string ip);
     }

@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DuplicatedSegmentException.cs" />
+    <Compile Include="NotExistingUrlException.cs" />
     <Compile Include="NotFoundShortUrlException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

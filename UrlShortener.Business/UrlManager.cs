@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization.Advanced;
 using UrlShortener.Data;
 using UrlShortener.Entities;
 using UrlShortener.Exceptions;
@@ -11,15 +14,24 @@ namespace UrlShortener.Business
 {
     public class UrlManager : IUrlManager
     {
+        public Task<List<Entities.ShortUrl>> EnumUrls()
+        {
+            return Task.Run(() =>
+            {
+                using (var ctx = new ShortenerContext())
+                {
+                    return ctx.ShortUrls.ToList();
+                }
+            });
+        }
+
         public Task<ShortUrl> ShortenUrl(string longUrl, string ip, string segment = "")
         {
             return Task.Run(() =>
             {
                 using (var ctx = new ShortenerContext())
                 {
-                    ShortUrl url;
-
-                    url = ctx.ShortUrls.FirstOrDefault(u => u.LongUrl == longUrl);
+                    var url = ctx.ShortUrls.FirstOrDefault(u => u.LongUrl == longUrl);
                     if (url != null)
                     {
                         return url;
@@ -31,9 +43,13 @@ namespace UrlShortener.Business
                         {
                             throw new DuplicatedSegmentException();
                         }
-                    }
-                    else
-                    {
+                    } else {
+                        if (!longUrl.StartsWith(Uri.UriSchemeHttp + "://") && !longUrl.StartsWith(Uri.UriSchemeHttps + "://"))
+                        {
+                            longUrl = Uri.UriSchemeHttp + "://" + longUrl;
+                        }
+
+                        CheckIfUrlValid(longUrl);
                         segment = this.NewSegment();
                     }
 
@@ -58,6 +74,21 @@ namespace UrlShortener.Business
                     return url;
                 }
             });
+        }
+
+        private static void CheckIfUrlValid(string longUrl)
+        {
+            Uri urlCheck = new Uri(longUrl);
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(urlCheck);
+            request.Timeout = 10000;
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+            }
+            catch (Exception)
+            {
+                throw new NotExistingUrlException();
+            }
         }
 
         public Task<Statistics> Click(string segment, string referer, string ip)
