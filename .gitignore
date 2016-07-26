@@ -45,3 +45,16 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+packages/
+UrlShortener.Business/bin/
+UrlShortener.Data/bin/
+UrlShortener.Exceptions/bin/
+UrlShortener.Entities/bin/
+UrlShortener.Tests/bin/
+UrlShortener.Web/bin/
+UrlShortener.Business/obj/
+UrlShortener.Data/obj/
+UrlShortener.Exceptions/obj/
+UrlShortener.Entities/obj/
+UrlShortener.Tests/obj/
+UrlShortener.Web/obj/
