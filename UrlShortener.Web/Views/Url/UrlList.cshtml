@@ -8,10 +8,10 @@
     <table>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ShortUrl)
+            @Html.DisplayNameFor(model => model.LongUrl)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LongUrl)
+            @Html.DisplayNameFor(model => model.ShortUrl)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.CreatedDate)
@@ -19,15 +19,18 @@
         <th>
             @Html.DisplayNameFor(model => model.CreatedIp)
         </th>
-        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.NumOfClicks)
+        </th>
+        @*<th></th>*@
     </tr>
     @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ShortUrl)
+                @Html.DisplayFor(modelItem => item.LongUrl)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LongUrl)
+                @Html.DisplayFor(modelItem => item.ShortUrl)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedDate)
@@ -36,8 +39,11 @@
                 @Html.DisplayFor(modelItem => item.CreatedIp)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.ShortUrl })
+                @Html.DisplayFor(modelItem => item.NumOfClicks)
             </td>
+            @*<td>
+                @Html.ActionLink("Details", "Details", new { id = item.ShortUrl })
+            </td>*@
         </tr>
     }
     </table>

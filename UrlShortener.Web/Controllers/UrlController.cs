@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using UrlShortener.Business;
 using UrlShortener.Entities;
+using UrlShortener.Exceptions;
 using UrlShortener.Web.Models;
 
 namespace UrlShortener.Web.Controllers
@@ -27,8 +28,16 @@ namespace UrlShortener.Web.Controllers
         public async Task<ActionResult> Index(Url url) {
             if (ModelState.IsValid)
             {
-               ShortUrl shortUrl = await _urlManager.ShortenUrl(url.LongUrl, Request.UserHostAddress);
-               url.ShortUrl = string.Format("{0}://{1}{2}{3}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"), shortUrl.Segment);
+                try
+                {
+                    ShortUrl shortUrl = await _urlManager.ShortenUrl(url.LongUrl, Request.UserHostAddress);
+                    url.ShortUrl = string.Format("{0}://{1}{2}{3}", Request.Url.Scheme, Request.Url.Authority,
+                        Url.Content("~"), shortUrl.Segment);
+                }
+                catch (NotExistingUrlException)
+                {
+                    ModelState.AddModelError("LongUrl", "Url doesn't exist");
+                }
             }
             return View(url);
         }
@@ -40,11 +49,11 @@ namespace UrlShortener.Web.Controllers
             return RedirectPermanent(stat.ShortUrl.LongUrl);
         }
 
-        [HttpGet]
-        public ActionResult List()
+        public async Task<ActionResult> List()
         {
-            var list = new List<Url>();
-            return View("UrlList", list);
+            var list = await _urlManager.EnumUrls();
+            var result = list.Select(url => new Url{LongUrl = url.LongUrl, ShortUrl = url.Segment, CreatedDate = url.Added, CreatedIp = url.Ip, NumOfClicks = url.NumOfClicks});
+            return View("UrlList", result);
         }
     }
 }
