@@ -17,7 +17,7 @@ namespace UrlShortener.Web.Models {
         public DateTime CreatedDate { get; set; }
         [DisplayName("IP")]
         public string CreatedIp { get; set; }
-        [DisplayName("# of clicks")]
+        [DisplayName("Clicks")]
         public int NumOfClicks { get; set; }
     }
 }

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization.Advanced;
 using UrlShortener.Data;
 using UrlShortener.Entities;
 using UrlShortener.Exceptions;
@@ -20,7 +17,7 @@ namespace UrlShortener.Business
             {
                 using (var ctx = new ShortenerContext())
                 {
-                    return ctx.ShortUrls.ToList();
+                    return ctx.ShortUrls.OrderBy(x => x.LongUrl).ToList();
                 }
             });
         }
@@ -34,6 +31,7 @@ namespace UrlShortener.Business
                     var url = ctx.ShortUrls.FirstOrDefault(u => u.LongUrl == longUrl);
                     if (url != null)
                     {
+                        url.LongUrl = EnsureUrlHasScheme(url.LongUrl);
                         return url;
                     }
 
@@ -44,10 +42,7 @@ namespace UrlShortener.Business
                             throw new DuplicatedSegmentException();
                         }
                     } else {
-                        if (!longUrl.StartsWith(Uri.UriSchemeHttp + "://") && !longUrl.StartsWith(Uri.UriSchemeHttps + "://"))
-                        {
-                            longUrl = Uri.UriSchemeHttp + "://" + longUrl;
-                        }
+                        longUrl = EnsureUrlHasScheme(longUrl);
 
                         CheckIfUrlValid(longUrl);
                         segment = this.NewSegment();
@@ -74,6 +69,15 @@ namespace UrlShortener.Business
                     return url;
                 }
             });
+        }
+
+        private static string EnsureUrlHasScheme(string url)
+        {
+            if (!url.StartsWith(Uri.UriSchemeHttp + "://") && !url.StartsWith(Uri.UriSchemeHttps + "://"))
+            {
+                url = Uri.UriSchemeHttp + "://" + url;
+            }
+            return url;
         }
 
         private static void CheckIfUrlValid(string longUrl)
@@ -129,7 +133,7 @@ namespace UrlShortener.Business
                 int i = 0;
                 while (true)
                 {
-                    string segment = Guid.NewGuid().ToString().Substring(0, 6);
+                    string segment = Guid.NewGuid().ToString().Substring(0, Configurator.SegmentLength);
                     if (!ctx.ShortUrls.Any(u => u.Segment == segment))
                     {
                         return segment;

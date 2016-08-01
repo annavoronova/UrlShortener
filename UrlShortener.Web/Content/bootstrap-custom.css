@@ -30,3 +30,19 @@
     border-color: transparent;
     color: #2e8b57 !important;
 }
+
+.table th {
+   text-align: center;   
+}
+
+.table td {
+   text-align: left;   
+}
+
+.table td.num {
+   text-align: right;   
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #aaaaaa;
+}

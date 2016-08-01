@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using UrlShortener.Business;
 using UrlShortener.Entities;
@@ -31,8 +28,7 @@ namespace UrlShortener.Web.Controllers
                 try
                 {
                     ShortUrl shortUrl = await _urlManager.ShortenUrl(url.LongUrl, Request.UserHostAddress);
-                    url.ShortUrl = string.Format("{0}://{1}{2}{3}", Request.Url.Scheme, Request.Url.Authority,
-                        Url.Content("~"), shortUrl.Segment);
+                    url.ShortUrl = GetShortUrl(shortUrl.Segment);
                 }
                 catch (NotExistingUrlException)
                 {
@@ -46,14 +42,21 @@ namespace UrlShortener.Web.Controllers
             // http:// should preceed .LongUrl for proper redirect
             string referer = Request.UrlReferrer != null ? Request.UrlReferrer.ToString() : string.Empty;
             Statistics stat = await this._urlManager.Click(segment, referer, Request.UserHostAddress);
-            return RedirectPermanent(stat.ShortUrl.LongUrl);
+            //return RedirectPermanent(stat.ShortUrl.LongUrl);
+            return Redirect(stat.ShortUrl.LongUrl);
         }
 
         public async Task<ActionResult> List()
         {
             var list = await _urlManager.EnumUrls();
-            var result = list.Select(url => new Url{LongUrl = url.LongUrl, ShortUrl = url.Segment, CreatedDate = url.Added, CreatedIp = url.Ip, NumOfClicks = url.NumOfClicks});
+            var result = list.Select(url => new Url{LongUrl = url.LongUrl, ShortUrl = GetShortUrl(url.Segment), CreatedDate = url.Added, CreatedIp = url.Ip, NumOfClicks = url.NumOfClicks});
             return View("UrlList", result);
+        }
+
+        private string GetShortUrl(string segment)
+        {
+            return string.Format("{0}://{1}{2}{3}", Request.Url.Scheme, Request.Url.Authority,
+                        Url.Content("~"), segment);
         }
     }
 }
