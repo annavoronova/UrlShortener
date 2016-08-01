@@ -33,8 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.5.16\lib\net45\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -123,6 +129,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\UrlShortener.Business\UrlShortener.Business.csproj">
+      <Project>{a553abc9-e39f-4871-bd16-cd7c726c1c37}</Project>
+      <Name>UrlShortener.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UrlShortener.Data\UrlShortener.Data.csproj">
+      <Project>{da65a601-a1c6-4a65-926e-4e85fea14511}</Project>
+      <Name>UrlShortener.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UrlShortener.Entities\UrlShortener.Entities.csproj">
+      <Project>{dab36b61-72f9-4ab7-a4e8-a187e15aff49}</Project>
+      <Name>UrlShortener.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UrlShortener.Exceptions\UrlShortener.Exceptions.csproj">
+      <Project>{b93d71c7-5d6a-4165-be27-e5f3bf5172e9}</Project>
+      <Name>UrlShortener.Exceptions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UrlShortener.Web\UrlShortener.Web.csproj">
       <Project>{38C4858F-4AE6-45C7-B943-2A3A35A2C897}</Project>
       <Name>UrlShortener.Web</Name>

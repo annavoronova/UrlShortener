@@ -45,7 +45,7 @@ namespace UrlShortener.Business
                         longUrl = EnsureUrlHasScheme(longUrl);
 
                         CheckIfUrlValid(longUrl);
-                        segment = this.NewSegment();
+                        segment = NewSegment();
                     }
 
                     if (string.IsNullOrEmpty(segment))

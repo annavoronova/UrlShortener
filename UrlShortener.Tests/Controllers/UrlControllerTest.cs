@@ -1,49 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UrlShortener.Web;
 using UrlShortener.Web.Controllers;
+using Moq;
+using UrlShortener.Business;
+using UrlShortener.Entities;
+using UrlShortener.Web.Models;
 
 namespace UrlShortener.Tests.Controllers {
     [TestClass]
     public class UrlControllerTest {
-        //[TestMethod]
-        //public void Index() {
-        //    // Arrange
-        //    UrlController controller = new UrlController();
+        private Mock<IUrlManager> _urlManagerMock;
+        //private Mock<HttpRequestBase> _requestMock;
+        private Mock<HttpContextBase> _contextMock;
 
-        //    // Act
-        //    ViewResult result = controller.Index() as ViewResult;
+        [TestInitialize]
+        public void SetUp()
+        {
+            _urlManagerMock = new Mock<IUrlManager>(MockBehavior.Strict);
+            //_requestMock = new Mock<HttpRequestBase>(MockBehavior.Strict);
+            _contextMock = new Mock<HttpContextBase>(MockBehavior.Strict);
+        }
 
-        //    // Assert
-        //    Assert.AreEqual("Modify this template to jump-start your ASP.NET MVC application.", result.ViewBag.Message);
-        //}
+        [TestMethod]
+        public void Index() {
+            // Arrange
+            UrlController controller = new UrlController(_urlManagerMock.Object);
 
-        //[TestMethod]
-        //public void About() {
-        //    // Arrange
-        //    UrlController controller = new UrlController();
+            // Act
+            ViewResult result = controller.Index() as ViewResult;
 
-        //    // Act
-        //    ViewResult result = controller.Index() as ViewResult;
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Model as Url);
+        }
 
-        //    // Assert
-        //    Assert.IsNotNull(result);
-        //}
+        [TestMethod]
+        public void IndexWithParam() {
+            // Arrange
+            var url = new Url
+            {
+                LongUrl = "testUrl",
+                ShortUrl = "000000"
+            };
+            var shortUrl = new ShortUrl
+            {
+                LongUrl = "testUrl",
+                Segment = "000000"
+            };
+            var ip = "::1";
 
-        //[TestMethod]
-        //public void Contact() {
-        //    // Arrange
-        //    HomeController controller = new HomeController();
+            _urlManagerMock.Setup(x => x.ShortenUrl(url.LongUrl, ip, "")).Returns(Task.FromResult(shortUrl));
+            _contextMock.SetupGet(x => x.Request.UserHostAddress).Returns(ip);
+            _contextMock.SetupGet(x => x.Request.Url).Returns(new Uri("http://localhost"));
+            _contextMock.SetupGet(x => x.Request.ApplicationPath).Returns("/UrlShortener");
+            var controller = new UrlController(_urlManagerMock.Object);
+            controller.ControllerContext = new ControllerContext(_contextMock.Object, new RouteData(), controller);
 
-        //    // Act
-        //    ViewResult result = controller.Contact() as ViewResult;
+            // Act
+            Task<ActionResult> task = controller.Index(url);
+            task.Wait();
+            Assert.IsNotNull(task);
+            var result = task.Result as ViewResult;
+            // Assert
+            Assert.IsNotNull(result);
+            var model = result.Model as Url;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(url.LongUrl, model.LongUrl);
+            Assert.IsTrue(model.ShortUrl.EndsWith(shortUrl.Segment));
+        }
 
-        //    // Assert
-        //    Assert.IsNotNull(result);
-        //}
+        [TestMethod]
+        public void ListUrls() {
+            // Arrange
+            var ip = "::1";
+            var urlList = new List<ShortUrl>
+            {
+                new ShortUrl{LongUrl = "test1", Segment = "000000", Added = DateTime.Today, Ip = ip, NumOfClicks = 1},
+                new ShortUrl{LongUrl = "test2", Segment = "000001", Added = DateTime.Today, Ip = ip, NumOfClicks = 1}
+            };
+            _urlManagerMock.Setup(x => x.EnumUrls()).Returns(Task.FromResult(urlList));
+            _contextMock.SetupGet(x => x.Request.Url).Returns(new Uri("http://localhost"));
+            _contextMock.SetupGet(x => x.Request.ApplicationPath).Returns("/UrlShortener");
+            var controller = new UrlController(_urlManagerMock.Object);
+            controller.ControllerContext = new ControllerContext(_contextMock.Object, new RouteData(), controller);
+
+            // Act
+            Task<ActionResult> task = controller.List();
+            task.Wait();
+            Assert.IsNotNull(task);
+            var result = task.Result as ViewResult;
+            // Assert
+            Assert.IsNotNull(result);
+            var model = result.Model as IEnumerable<Url>;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(urlList.Count, model.Count());
+            Assert.AreEqual(urlList.First().LongUrl, model.First().LongUrl);
+        }
     }
 }

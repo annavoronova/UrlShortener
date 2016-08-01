@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using UrlShortener.Business;
 using UrlShortener.Entities;
@@ -56,7 +57,7 @@ namespace UrlShortener.Web.Controllers
         private string GetShortUrl(string segment)
         {
             return string.Format("{0}://{1}{2}{3}", Request.Url.Scheme, Request.Url.Authority,
-                        Url.Content("~"), segment);
+                        Request.ApplicationPath + "/", segment);
         }
     }
 }
