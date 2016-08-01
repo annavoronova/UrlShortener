@@ -2,20 +2,21 @@
 @{
     ViewBag.Title = "Url Shortener";
 }
+<div class="jumbotron text-center">
+        <h1>@Html.ActionLink("Shorten Me", "Index", "Url")</h1>
+        <p class="">A top-notch service to shorten your links and track your customers clicks</p>
 
-<h2>Shorten URL</h2>
+    @Html.ValidationSummary()
 
-@Html.ValidationSummary()
-
-@using (Html.BeginForm()) {
-    <div class="form-group">
-        @Html.TextBoxFor(model => model.LongUrl, new {placeholder = "URL you would like to have shortened", @class = "form-control"})
-    </div>
-    if (!string.IsNullOrEmpty(Model.ShortUrl)) {
-        <div>
-            <a href="@Model.ShortUrl" target="_blank">@Model.ShortUrl</a>
+    @using (Html.BeginForm()) {
+        <div class="form-inline">
+            @Html.TextBoxFor(model => model.LongUrl, new { placeholder = "URL to shorten", @class = "form-control" })
+            <input type="submit" class="btn btn-danger" value="Shorten" />
         </div>
+        if (!string.IsNullOrEmpty(Model.ShortUrl)) {
+            <div>
+                <a href="@Model.ShortUrl" target="_blank">@Model.ShortUrl</a>
+            </div>
+            } 
     }
-
-    <input type="submit" class="btn btn-primary" value="Shorten" />
-}
+</div>
