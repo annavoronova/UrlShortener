@@ -3,6 +3,7 @@ using Microsoft.Practices.Unity;
 using System.Web.Http;
 using UrlShortener.Business;
 using Unity.WebApi;
+using UrlShortener.Data;
 
 namespace UrlShortener.Web
 {
@@ -22,6 +23,7 @@ namespace UrlShortener.Web
 
         public static void RegisterTypes(IUnityContainer container)
         {
+            container.RegisterType<IShortenerContext, ShortenerContext>();
             container.RegisterType<IUrlManager, UrlManager>();
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }

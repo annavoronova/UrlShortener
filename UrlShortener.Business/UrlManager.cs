@@ -11,6 +11,13 @@ namespace UrlShortener.Business
 {
     public class UrlManager : IUrlManager
     {
+        private IShortenerContext ctx;
+
+        public UrlManager(IShortenerContext ctx)
+        {
+            this.ctx = ctx;
+        }
+
         public Task<List<Entities.ShortUrl>> EnumUrls()
         {
             return Task.Run(() =>

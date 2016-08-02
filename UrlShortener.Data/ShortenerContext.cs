@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using UrlShortener.Entities;
 
 namespace UrlShortener.Data
 {
-    //[DbConfigurationType(typeof())]
-    public class ShortenerContext : DbContext {
+    public class ShortenerContext : DbContext, IShortenerContext {
         public ShortenerContext()
             : base("name=ShortenerConnection") {
 

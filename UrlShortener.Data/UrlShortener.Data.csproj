@@ -54,6 +54,7 @@
       <DependentUpon>201607251859305_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="IShortenerContext.cs" />
     <Compile Include="ShortenerContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
