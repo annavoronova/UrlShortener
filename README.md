@@ -15,3 +15,5 @@ At the moment of starting this project I was utterly unfamiliar with the followi
 - GitHub.
 
 The project should have been unit tested more, but the time pressed.
+
+Database backup is located in UrlShortener.Data folder (db_shortener.bak).
