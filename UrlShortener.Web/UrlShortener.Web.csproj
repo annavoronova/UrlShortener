@@ -282,6 +282,14 @@
     <Content Include="Views\Shared\Error404.cshtml" />
     <Content Include="Views\Shared\Error409.cshtml" />
     <Content Include="Views\Shared\Error500.cshtml" />
+    <Content Include="Web.template.config" />
+    <Content Include="Web.template.Debug.config">
+      <DependentUpon>Web.template.config</DependentUpon>
+    </Content>
+    <Content Include="Web.template.Release.config">
+      <DependentUpon>Web.template.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

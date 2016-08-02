@@ -58,3 +58,5 @@ UrlShortener.Exceptions/obj/
 UrlShortener.Entities/obj/
 UrlShortener.Tests/obj/
 UrlShortener.Web/obj/
+UrlShortener.Web/Web.config
+UrlShortener.Tests/App.config
