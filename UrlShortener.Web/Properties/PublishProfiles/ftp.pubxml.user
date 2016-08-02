@@ -170,7 +170,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/22/2016 19:16:10</publishTime>
     </File>
     <File Include="bin/UrlShortener.Business.dll">
-      <publishTime>08/02/2016 03:42:33</publishTime>
+      <publishTime>08/02/2016 13:24:09</publishTime>
     </File>
     <File Include="bin/UrlShortener.Data.dll">
       <publishTime>08/02/2016 03:42:33</publishTime>
@@ -182,7 +182,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/02/2016 03:42:32</publishTime>
     </File>
     <File Include="bin/UrlShortener.Web.dll">
-      <publishTime>08/02/2016 12:18:52</publishTime>
+      <publishTime>08/02/2016 13:24:09</publishTime>
     </File>
     <File Include="bin/WebActivatorEx.dll">
       <publishTime>07/22/2016 19:15:52</publishTime>
@@ -215,7 +215,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/21/2016 22:38:58</publishTime>
     </File>
     <File Include="Content/bootstrap-custom.css">
-      <publishTime>08/01/2016 19:21:23</publishTime>
+      <publishTime>08/02/2016 13:39:06</publishTime>
     </File>
     <File Include="Content/bootstrap-theme.css">
       <publishTime>07/28/2016 23:17:41</publishTime>
@@ -293,7 +293,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/21/2016 22:38:42</publishTime>
     </File>
     <File Include="packages.config">
-      <publishTime>08/02/2016 09:47:08</publishTime>
+      <publishTime>08/02/2016 13:23:13</publishTime>
     </File>
     <File Include="Properties/AssemblyInfo.cs">
       <publishTime>07/21/2016 22:38:42</publishTime>
@@ -356,7 +356,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/02/2016 09:38:11</publishTime>
     </File>
     <File Include="Scripts/angular-mocks.js">
-      <publishTime>08/02/2016 09:38:11</publishTime>
+      <publishTime>08/02/2016 13:23:12</publishTime>
     </File>
     <File Include="Scripts/angular-parse-ext.js">
       <publishTime>08/02/2016 09:38:11</publishTime>
@@ -2372,13 +2372,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/25/2016 22:39:00</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>07/29/2016 11:37:52</publishTime>
+      <publishTime>08/02/2016 12:01:14</publishTime>
     </File>
     <File Include="Views/Url/Index.cshtml">
-      <publishTime>08/01/2016 19:33:47</publishTime>
+      <publishTime>08/02/2016 13:38:34</publishTime>
     </File>
     <File Include="Views/Url/UrlList.cshtml">
-      <publishTime>08/01/2016 19:43:56</publishTime>
+      <publishTime>08/02/2016 11:36:40</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>07/21/2016 22:38:42</publishTime>
@@ -2387,7 +2387,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/21/2016 22:38:42</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>08/02/2016 12:19:11</publishTime>
+      <publishTime>08/02/2016 13:48:02</publishTime>
     </File>
   </ItemGroup>
 </Project>

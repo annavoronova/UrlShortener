@@ -41,19 +41,10 @@ namespace UrlShortener.Web.Controllers
         }
 
         public async Task<ActionResult> Click(string segment) {
-            // http:// should preceed .LongUrl for proper redirect
             string referer = Request.UrlReferrer != null ? Request.UrlReferrer.ToString() : string.Empty;
             Statistics stat = await this._urlManager.Click(segment, referer, Request.UserHostAddress);
-            //return RedirectPermanent(stat.ShortUrl.LongUrl);
             return Redirect(stat.ShortUrl.LongUrl);
         }
-
-        //public async Task<ActionResult> List()
-        //{
-        //    var list = await _urlManager.EnumUrls();
-        //    var result = list.Select(url => new Url{LongUrl = url.LongUrl, ShortUrl = GetShortUrl(url.Segment), CreatedDate = url.Added, CreatedIp = url.Ip, NumOfClicks = url.NumOfClicks});
-        //    return View("UrlList", result);
-        //}
 
         public ActionResult List()
         {

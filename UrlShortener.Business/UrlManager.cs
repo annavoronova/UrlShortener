@@ -31,7 +31,7 @@ namespace UrlShortener.Business
                     var url = ctx.ShortUrls.FirstOrDefault(u => u.LongUrl == longUrl);
                     if (url != null)
                     {
-                        url.LongUrl = EnsureUrlHasScheme(url.LongUrl);
+                        url.LongUrl = GetUrlWithScheme(url.LongUrl);
                         return url;
                     }
 
@@ -42,9 +42,9 @@ namespace UrlShortener.Business
                             throw new DuplicatedSegmentException();
                         }
                     } else {
-                        longUrl = EnsureUrlHasScheme(longUrl);
+                        var urlWithScheme = GetUrlWithScheme(longUrl);
 
-                        CheckIfUrlValid(longUrl);
+                        CheckIfUrlValid(urlWithScheme);
                         segment = NewSegment();
                     }
 
@@ -71,7 +71,7 @@ namespace UrlShortener.Business
             });
         }
 
-        private static string EnsureUrlHasScheme(string url)
+        private static string GetUrlWithScheme(string url)
         {
             if (!url.StartsWith(Uri.UriSchemeHttp + "://") && !url.StartsWith(Uri.UriSchemeHttps + "://"))
             {
@@ -108,6 +108,7 @@ namespace UrlShortener.Business
                     }
 
                     url.NumOfClicks = url.NumOfClicks + 1;
+                    url.LongUrl = GetUrlWithScheme(url.LongUrl);
 
                     Statistics stat = new Statistics()
                     {
