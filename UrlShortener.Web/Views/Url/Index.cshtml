@@ -6,9 +6,11 @@
         <h1>@Html.ActionLink("Shorten Me", "Index", "Url")</h1>
         <p class="">A top-notch service to shorten your links and track your customers clicks</p>
 
-    @Html.ValidationSummary()
+    <div class="validation-list">
+        @Html.ValidationSummary()
+    </div>
 
-    @using (Html.BeginForm()) {
+        @using (Html.BeginForm()) {
         <div class="form-inline">
             @Html.TextBoxFor(model => model.LongUrl, new { placeholder = "URL to shorten", @class = "form-control" })
             <input type="submit" class="btn btn-danger" value="Shorten" />

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using UrlShortener.Business;
 using UrlShortener.Entities;
@@ -47,11 +48,23 @@ namespace UrlShortener.Web.Controllers
             return Redirect(stat.ShortUrl.LongUrl);
         }
 
-        public async Task<ActionResult> List()
+        //public async Task<ActionResult> List()
+        //{
+        //    var list = await _urlManager.EnumUrls();
+        //    var result = list.Select(url => new Url{LongUrl = url.LongUrl, ShortUrl = GetShortUrl(url.Segment), CreatedDate = url.Added, CreatedIp = url.Ip, NumOfClicks = url.NumOfClicks});
+        //    return View("UrlList", result);
+        //}
+
+        public ActionResult List()
+        {
+            return View("UrlList");
+        }
+
+        public async Task<JsonResult> ListUrls()
         {
             var list = await _urlManager.EnumUrls();
-            var result = list.Select(url => new Url{LongUrl = url.LongUrl, ShortUrl = GetShortUrl(url.Segment), CreatedDate = url.Added, CreatedIp = url.Ip, NumOfClicks = url.NumOfClicks});
-            return View("UrlList", result);
+            var result = list.Select(url => new Url { LongUrl = url.LongUrl, ShortUrl = GetShortUrl(url.Segment), CreatedDate = url.Added, CreatedIp = url.Ip, NumOfClicks = url.NumOfClicks });
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         private string GetShortUrl(string segment)

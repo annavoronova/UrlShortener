@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.Script.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UrlShortener.Web.Controllers;
 using Moq;
+using Newtonsoft.Json;
 using UrlShortener.Business;
 using UrlShortener.Entities;
 using UrlShortener.Web.Models;
@@ -91,13 +94,11 @@ namespace UrlShortener.Tests.Controllers {
             controller.ControllerContext = new ControllerContext(_contextMock.Object, new RouteData(), controller);
 
             // Act
-            Task<ActionResult> task = controller.List();
+            Task<JsonResult> task = controller.ListUrls();
             task.Wait();
-            Assert.IsNotNull(task);
-            var result = task.Result as ViewResult;
             // Assert
-            Assert.IsNotNull(result);
-            var model = result.Model as IEnumerable<Url>;
+            Assert.IsNotNull(task);
+            var model = task.Result.Data as IEnumerable<Url>;// as JsonResult;
             Assert.IsNotNull(model);
             Assert.AreEqual(urlList.Count, model.Count());
             Assert.AreEqual(urlList.First().LongUrl, model.First().LongUrl);

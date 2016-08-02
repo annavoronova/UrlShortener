@@ -19,6 +19,12 @@ namespace UrlShortener.Web {
                 url: "{controller}/{action}/{id}",
                 defaults: new {controller = "Url", action = "Index", id = UrlParameter.Optional}
                 );
+
+            //routes.MapRoute(
+            //    name: "UrlList",
+            //    url: "{controller}",
+            //    defaults: new {controller = "Url", action = "List"}
+            //    );
         }
     }
 }

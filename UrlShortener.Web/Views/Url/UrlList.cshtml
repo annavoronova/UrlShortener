@@ -1,56 +1,40 @@
-﻿@model IEnumerable<UrlShortener.Web.Models.Url>
+﻿@*@model IEnumerable<UrlShortener.Web.Models.Url>
 @{
     ViewBag.Title = "URL List";
-}
-<div class="jumbotron text-center">
-    <h2>Shortened URL List</h2>
+}*@
 
-    @if (!@Model.Any())
-    {
-        <label>No URLs shortened</label>
-    }
-    else
-    {
-        <div class="table-responsive">
-            <table class=" table table-condensed table-bordered table-hover">
+
+@section scripts{
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/Client/ShortUrlClient.js"></script>
+}
+<div ng-app="UrlShortenerApp" class="jumbotron text-center">
+    <div ng-controller="UrlShortenerController">
+        <h2>Shortened URL List</h2>
+        <div class="form-inline" ng-show="!hasNoData">
+            <input type="text" class="form-control" placeholder="Search URL" ng-model="searchUrl"/>
+        </div>
+        <div ng-show="hasNoData">
+            No URLs have been shortened yet
+        </div>
+        <br/>
+        <div class="table-responsive" ng-show="!hasNoData">
+            <table class="table table-condensed table-bordered table-hover">
                 <tr>
-                    <th class="th">
-                        @Html.DisplayNameFor(model => model.LongUrl)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.ShortUrl)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.CreatedDate)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.CreatedIp)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.NumOfClicks)
-                    </th>
+                    <th>Url</th>
+                    <th>Shortened URL</th>
+                    <th>Created</th>
+                    <th>IP</th>
+                    <th>Clicks</th>
                 </tr>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.LongUrl)
-                        </td>
-                        <td>
-                            <a href="@item.ShortUrl" target="_blank">@item.ShortUrl</a>
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.CreatedDate)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.CreatedIp)
-                        </td>
-                        <td class="num">
-                            @Html.DisplayFor(modelItem => item.NumOfClicks)
-                        </td>
-                    </tr>
-                }
+                <tr ng-repeat="url in urls | filter : searchUrl">
+                    <td>{{url.LongUrl}}</td>
+                    <td><a href="{{url.ShortUrl}}" target="_blank">{{url.ShortUrl}}</a></td>
+                    <td>{{url.CreatedDate | jsDate | date: 'yyyy-MM-dd HH:mm'}}</td>
+                    <td>{{url.CreatedIp}}</td>
+                    <td class ="num">{{url.NumOfClicks}}</td>
+                </tr>
             </table>
         </div>
-    }
     </div>
+</div>
