@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Serilog;
 
 namespace UrlShortener.Web {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
@@ -13,6 +14,10 @@ namespace UrlShortener.Web {
 
     public class MvcApplication : System.Web.HttpApplication {
         protected void Application_Start() {
+            // Initialize Serilog first
+            SerilogConfig.Configure();
+            Log.Information("Application starting up");
+
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -20,6 +25,20 @@ namespace UrlShortener.Web {
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
+
+            Log.Information("Application startup completed");
+        }
+
+        protected void Application_End()
+        {
+            Log.Information("Application shutting down");
+            Log.CloseAndFlush();
+        }
+
+        protected void Application_Error()
+        {
+            var exception = Server.GetLastError();
+            Log.Error(exception, "Unhandled application error");
         }
     }
 }
