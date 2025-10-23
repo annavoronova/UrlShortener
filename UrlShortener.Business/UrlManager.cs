@@ -33,12 +33,25 @@ namespace UrlShortener.Business
         {
             return Task.Run(() =>
             {
+                // Input validation
+                if (string.IsNullOrWhiteSpace(longUrl))
+                {
+                    throw new ArgumentException("URL cannot be null or empty", nameof(longUrl));
+                }
+
+                if (string.IsNullOrWhiteSpace(ip))
+                {
+                    throw new ArgumentException("IP address cannot be null or empty", nameof(ip));
+                }
+
                 using (var ctx = new ShortenerContext())
                 {
-                    var url = ctx.ShortUrls.FirstOrDefault(u => u.LongUrl == longUrl);
+                    // Normalize URL with scheme for consistent comparison
+                    var normalizedUrl = GetUrlWithScheme(longUrl);
+                    
+                    var url = ctx.ShortUrls.FirstOrDefault(u => u.LongUrl == normalizedUrl);
                     if (url != null)
                     {
-                        url.LongUrl = GetUrlWithScheme(url.LongUrl);
                         return url;
                     }
 
@@ -48,32 +61,43 @@ namespace UrlShortener.Business
                         {
                             throw new DuplicatedSegmentException();
                         }
-                    } else {
-                        var urlWithScheme = GetUrlWithScheme(longUrl);
-
-                        CheckIfUrlValid(urlWithScheme);
-                        segment = NewSegment();
+                    } 
+                    else 
+                    {
+                        CheckIfUrlValid(normalizedUrl);
+                        segment = GenerateUniqueSegment(ctx);
                     }
 
                     if (string.IsNullOrEmpty(segment))
                     {
-                        throw new ArgumentException("Segment is empty");
+                        throw new InvalidOperationException("Failed to generate unique segment");
                     }
 
                     url = new ShortUrl()
                     {
-                        Added = DateTime.Now,
+                        Added = DateTime.UtcNow,
                         Ip = ip,
-                        LongUrl = longUrl,
+                        LongUrl = normalizedUrl,
                         NumOfClicks = 0,
                         Segment = segment
                     };
 
-                    ctx.ShortUrls.Add(url);
-
-                    ctx.SaveChanges();
-
-                    return url;
+                    try
+                    {
+                        ctx.ShortUrls.Add(url);
+                        ctx.SaveChanges();
+                        return url;
+                    }
+                    catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
+                    {
+                        // Handle race condition - segment might have been created by another thread
+                        if (ex.InnerException?.Message.Contains("UNIQUE") == true || 
+                            ex.InnerException?.Message.Contains("duplicate") == true)
+                        {
+                            throw new DuplicatedSegmentException("Segment already exists", ex);
+                        }
+                        throw;
+                    }
                 }
             });
         }
@@ -92,13 +116,29 @@ namespace UrlShortener.Business
             Uri urlCheck = new Uri(longUrl);
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(urlCheck);
             request.Timeout = 10000;
+            request.Method = "HEAD"; // Use HEAD request to avoid downloading content
+            
             try
             {
-                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
+                {
+                    // Response is automatically disposed by the using statement
+                }
             }
-            catch (Exception)
+            catch (WebException ex)
             {
-                throw new NotExistingUrlException();
+                // Handle specific web exceptions
+                if (ex.Status == WebExceptionStatus.Timeout || 
+                    ex.Status == WebExceptionStatus.ConnectFailure ||
+                    ex.Status == WebExceptionStatus.NameResolutionFailure)
+                {
+                    throw new NotExistingUrlException($"URL is not accessible: {ex.Message}", ex);
+                }
+                throw new NotExistingUrlException($"URL validation failed: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new NotExistingUrlException($"URL validation failed: {ex.Message}", ex);
             }
         }
 
@@ -106,6 +146,17 @@ namespace UrlShortener.Business
         {
             return Task.Run(() =>
             {
+                // Input validation
+                if (string.IsNullOrWhiteSpace(segment))
+                {
+                    throw new ArgumentException("Segment cannot be null or empty", nameof(segment));
+                }
+
+                if (string.IsNullOrWhiteSpace(ip))
+                {
+                    throw new ArgumentException("IP address cannot be null or empty", nameof(ip));
+                }
+
                 using (var ctx = new ShortenerContext())
                 {
                     ShortUrl url = ctx.ShortUrls.FirstOrDefault(u => u.Segment == segment);
@@ -115,18 +166,16 @@ namespace UrlShortener.Business
                     }
 
                     url.NumOfClicks = url.NumOfClicks + 1;
-                    url.LongUrl = GetUrlWithScheme(url.LongUrl);
 
                     Statistics stat = new Statistics()
                     {
-                        ClickDate = DateTime.Now,
+                        ClickDate = DateTime.UtcNow,
                         Ip = ip,
-                        Referrer = referer,
+                        Referrer = referer ?? string.Empty,
                         ShortUrl = url
                     };
 
                     ctx.Statistics.Add(stat);
-
                     ctx.SaveChanges();
 
                     return stat;
@@ -134,26 +183,22 @@ namespace UrlShortener.Business
             });
         }
 
-        private string NewSegment()
+        private string GenerateUniqueSegment(IShortenerContext ctx)
         {
-            using (var ctx = new ShortenerContext())
+            int attempts = 0;
+            const int maxAttempts = 50;
+            
+            while (attempts < maxAttempts)
             {
-                int i = 0;
-                while (true)
+                string segment = Guid.NewGuid().ToString().Substring(0, Configurator.SegmentLength);
+                if (!ctx.ShortUrls.Any(u => u.Segment == segment))
                 {
-                    string segment = Guid.NewGuid().ToString().Substring(0, Configurator.SegmentLength);
-                    if (!ctx.ShortUrls.Any(u => u.Segment == segment))
-                    {
-                        return segment;
-                    }
-                    if (i > 30)
-                    {
-                        break;
-                    }
-                    i++;
+                    return segment;
                 }
-                return string.Empty;
+                attempts++;
             }
+            
+            throw new InvalidOperationException($"Failed to generate unique segment after {maxAttempts} attempts");
         }
     }
 }

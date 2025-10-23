@@ -6,5 +6,10 @@ using System.Threading.Tasks;
 
 namespace UrlShortener.Exceptions
 {
-    public class DuplicatedSegmentException : Exception {}
+    public class DuplicatedSegmentException : Exception 
+    {
+        public DuplicatedSegmentException() : base() { }
+        public DuplicatedSegmentException(string message) : base(message) { }
+        public DuplicatedSegmentException(string message, Exception innerException) : base(message, innerException) { }
+    }
 }

@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace UrlShortener.Data {
     public static class Configurator
     {
-        private const string SegmenetLengthKey = "SegmentLength";
+        private const string SegmentLengthKey = "SegmentLength";
         private const int DefaultSegmentLength = 6;
         public static int SegmentLength
         {
             get
             {
-                var segmentLength = ConfigurationManager.AppSettings[SegmenetLengthKey];
+                var segmentLength = ConfigurationManager.AppSettings[SegmentLengthKey];
                 int result;
                 if (int.TryParse(segmentLength, out result))
                 {

@@ -6,5 +6,10 @@ using System.Threading.Tasks;
 
 namespace UrlShortener.Exceptions
 {
-    public class NotExistingUrlException : Exception {}
+    public class NotExistingUrlException : Exception 
+    {
+        public NotExistingUrlException() : base() { }
+        public NotExistingUrlException(string message) : base(message) { }
+        public NotExistingUrlException(string message, Exception innerException) : base(message, innerException) { }
+    }
 }
